@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/demo-security
-    driverClassName: org.postgresql.Driver
-    username: postgres
-    password: masterkey
+    url: jdbc:mysql://localhost/backendsecurity
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
   jpa:
     hibernate:
       ddl-auto: create-drop
