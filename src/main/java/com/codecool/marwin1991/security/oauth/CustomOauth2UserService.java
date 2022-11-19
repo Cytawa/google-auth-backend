@@ -61,13 +61,18 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     private AppUser register(OAuth2UserRequest userRequest, OAuth2UserInfo oAuth2UserInfo) {
         AppUser appUser = new AppUser();
 
-        throw new RuntimeException("not implemented");
+        appUser.setProvider(AuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId()));
+        appUser.setProviderId(oAuth2UserInfo.getId());
+        appUser.setName(oAuth2UserInfo.getName());
+        appUser.setEmail(oAuth2UserInfo.getEmail());
+        appUser.setImageurl(oAuth2UserInfo.getImageUrl());
 
-        // return userRepository.save(appUser);
+        return userRepository.save(appUser);
     }
 
     private AppUser update(AppUser appUser, OAuth2UserInfo oAuth2UserInfo) {
-        throw new RuntimeException("not implemented");
-        // return userRepository.save(appUser);
+      appUser.setName(oAuth2UserInfo.getName());
+      appUser.setImageurl(oAuth2UserInfo.getImageUrl());
+         return userRepository.save(appUser);
     }
 }
