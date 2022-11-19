@@ -17,14 +17,45 @@ public class TokenProvider {
     private final AppConfig appConfig;
 
     public String createToken(Authentication authentication) {
-        throw new RuntimeException("not implemented");
+
+      UserPrincipal userPrincipal=(UserPrincipal) authentication.getPrincipal();
+      Date now =new Date();
+        Date exiration =new Date(now.getTime()+appConfig.getTokenExpirationMsec());
+
+        return Jwts.builder()
+                .setSubject(userPrincipal.getId())
+                .setIssuedAt(now)
+                .setExpiration(exiration)
+                .signWith(SignatureAlgorithm.ES512, appConfig.getTokenSecret())
+                .compact();
     }
 
     public String getUserIdFromToken(String token) {
-        throw new RuntimeException("not implemented");
+
+
+
+       Claims claims=Jwts.parser()
+               .setSigningKey(appConfig.getTokenSecret())
+               .parseClaimsJws(token)
+               .getBody();
+       return claims.getSubject();
     }
 
     public boolean validateToken(String token) {
-        throw new RuntimeException("not implemented");
+        try {
+            Jwts.parser()
+                    .setSigningKey(appConfig.getTokenSecret())
+                    .parseClaimsJws(token);
+            return true;
+        } catch (SignatureException e){
+            log.info("Signature JWT is invalid");
+        } catch (ExpiredJwtException e){
+            log.info("JWT is exoired");
+        } catch (Exception e){
+            log.error("JWT problem !!!!, a");
+        }
+        return false;
+
+
     }
 }
