@@ -28,7 +28,20 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        //TODO
+        try{
+            String jwt=getJwtFromReqest(request);
+            if(StringUtils.hasText(jwt)&&tokenProvider.validateToken(jwt)){
+                String userId=tokenProvider.getUserIdFromToken(jwt);
+                UserDetails userDetails=userService.loadUserById(userId);
+
+UsernamePasswordAuthenticationToken authenticationToken=
+        new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+
+authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
+        } catch (Exception e){log.error("Cloud not authenticate user " + e);
+            }
 
         filterChain.doFilter(request, response);
     }
