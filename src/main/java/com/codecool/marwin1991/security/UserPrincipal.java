@@ -29,7 +29,16 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     }
 
     public static UserPrincipal create(AppUser appUser){
-        throw new RuntimeException("not implemented");
+
+
+      List<GrantedAuthority> authorities=Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+      return new UserPrincipal(
+              appUser.getId(),
+              appUser.getEmail(),
+              appUser.getPassword(),
+              authorities
+      );
     }
 
     public static UserPrincipal create(AppUser appUser, Map<String, Object> attributes){
